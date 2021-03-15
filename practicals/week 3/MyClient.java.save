@@ -1,0 +1,7 @@
+import java.io.*;
+import java.net.*;
+public class MyClient {
+	public static void main(String[] args) {
+	Sock
+	}
+}
