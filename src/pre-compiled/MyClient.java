@@ -10,7 +10,6 @@ public class MyClient {
 			System.out.println("# java Client updated 24-March, 2021 @ MQ");
 			System.out.println("Connected to Server");
 			String rcvd = "";
-			String back = "";
 			String[] job;
 			String[] current;
 
@@ -28,10 +27,10 @@ public class MyClient {
 				if(rcvd.equals("OK")){
 					send("REDY", sock);
 				} else {
-					send("QUIT", sock);
+					error(sock);
 				}
 			} else {
-				send("QUIT", sock);
+				error(sock);
 			}
 
 			//job schedule
@@ -43,7 +42,7 @@ public class MyClient {
 					job = rcvd.split(" ");
 					send("GETS Avail " + job[4] + " " + job[5] + " " + job[6], sock);
 					current = job;
-				} else if(rcvd == (".")){
+				} else if(rcvd.contains(".") && rcvd.length() == 1){
 					send("SCHD " + current[2] + " " + largestServer(si.servers) + " 0", sock);
 				} else if(rcvd.contains("OK") || rcvd.contains("JCPL")){
 					send("REDY", sock);
@@ -61,11 +60,23 @@ public class MyClient {
 				send("QUIT", sock);
 				sock.close();
 			}
+			if(rcvd.contains("NONE")) {
+                send("QUIT", sock);
+                rcvd = receive(sock);
+                if(rcvd.contains("QUIT")) {
+                    sock.close();
+                    System.exit(0);
+                }
+            }
+            else {
+                error(sock);
+            }
 
 			sock.close();
 			System.out.println("End Connection");
 		} catch(Exception e){
-			System.out.println(e);
+			e.printStackTrace();
+            System.exit(1);
 		}
 	}
 
@@ -98,6 +109,12 @@ public class MyClient {
             		}
         	}
         	return bigServer;
-    	}
+    }
+
+	private static void error(Socket soc) throws IOException {
+        send("QUIT", soc);
+        soc.close();
+        System.exit(1);
+    }
 
 }

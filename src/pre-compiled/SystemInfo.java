@@ -1,6 +1,5 @@
 import java.io.*;
 import java.util.*;
-import javax.xml.*;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
