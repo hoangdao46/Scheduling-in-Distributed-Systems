@@ -96,6 +96,7 @@ public class MyClient {
 			buff.append(c);
 		}
 		temp = buff.toString();
+		System.out.println(temp);
 		return temp;
 	}
 
