@@ -2,7 +2,7 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
-public class MyClient {
+public class week6 {
 
 	public static void main(String[] args) throws Exception{
 		try {
@@ -29,9 +29,11 @@ public class MyClient {
 					send("REDY", sock);
 				} else {
 					send("QUIT", sock);
+					sock.close();
 				}
 			} else {
 				send("QUIT", sock);
+				sock.close();
 			}
 
 			//job schedule
@@ -43,7 +45,7 @@ public class MyClient {
 					job = rcvd.split(" ");
 					send("GETS Avail " + job[4] + " " + job[5] + " " + job[6], sock);
 					current = job;
-				} else if(rcvd == (".")){
+				} else if(rcvd.contains(".") && rcvd.length() == 1){
 					send("SCHD " + current[2] + " " + largestServer(si.servers) + " 0", sock);
 				} else if(rcvd.contains("OK") || rcvd.contains("JCPL")){
 					send("REDY", sock);
@@ -85,6 +87,7 @@ public class MyClient {
 			buff.append(c);
 		}
 		temp = buff.toString();
+		System.out.println(temp);
 		return temp;
 	}
 
