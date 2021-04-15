@@ -42,9 +42,9 @@ public class MyClient {
 					job = rcvd.split(" ");
 					send("GETS Avail " + job[4] + " " + job[5] + " " + job[6], sock);
 					current = job;
-				} else if(rcvd.contains(".") && rcvd.length() == 1){
+				} else if(rcvd.equals(".")){
 					send("SCHD " + current[2] + " " + largestServer(si.servers) + " 0", sock);
-				} else if(rcvd.contains("OK") || rcvd.contains("JCPL")){
+				} else if(rcvd.equals("OK")||rcvd.contains("JCPL")){
 					send("REDY", sock);
 				} else if(rcvd.contains("ERR")){
 					send("QUIT", sock);
@@ -56,47 +56,38 @@ public class MyClient {
 			}
 
 			//quit protocol
-			if(rcvd.contains("NONE")){
-				send("QUIT", sock);
-				sock.close();
-			}
 			if(rcvd.contains("NONE")) {
                 send("QUIT", sock);
                 rcvd = receive(sock);
                 if(rcvd.contains("QUIT")) {
                     sock.close();
-                    System.exit(0);
+					System.out.println("aha");
                 }
-            }
-            else {
+            } else {
                 error(sock);
+				System.out.println("yeah");
             }
 
-			sock.close();
-			System.out.println("End Connection");
 		} catch(Exception e){
 			e.printStackTrace();
-            System.exit(1);
 		}
 	}
 
-	private static void send(String str, Socket soc) throws IOException{
-		PrintWriter dataOut = new PrintWriter(soc.getOutputStream(), true);
-		dataOut.print(str);
+	private static void send(String str, Socket sOut) throws IOException{
+		DataOutputStream dataOut = new DataOutputStream(sOut.getOutputStream());
+		dataOut.write(str.getBytes());
 		dataOut.flush();
 	}
 
-	private static String receive(Socket soc) throws IOException{
+	private static String receive(Socket sIn) throws IOException{
+		DataInputStream dataIn = new DataInputStream(sIn.getInputStream());
 		String temp = "";
-		BufferedReader dataIn = new BufferedReader(new InputStreamReader(soc.getInputStream()));
-		StringBuffer buff = new StringBuffer();
-		while (dataIn.ready()){
-			char[] c = new char[] {1};
-			dataIn.read(c);
-			buff.append(c);
+		char cha = '\0';
+		while(dataIn.available()!=0){
+			cha = (char)dataIn.readByte();
+			temp += cha;
 		}
-		temp = buff.toString();
-		System.out.println(temp);
+		System.out.println("<rcvd: "+temp+">");
 		return temp;
 	}
 
@@ -115,7 +106,6 @@ public class MyClient {
 	private static void error(Socket soc) throws IOException {
         send("QUIT", soc);
         soc.close();
-        System.exit(1);
     }
 
 }
