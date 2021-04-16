@@ -11,7 +11,7 @@ public class MyClient {
 			System.out.println("Connected to Server");
 			String rcvd = "";
 			String[] job;
-			String[] current;
+			int counter = 0;
 
 			send("HELO", sock);
 			rcvd = receive(sock);
@@ -35,24 +35,24 @@ public class MyClient {
 
 			//job schedule
 			rcvd = receive(sock);
-			current = rcvd.split(" ");
 
 			while(!rcvd.contains("NONE")){
-				if(rcvd.contains("JOBN")){
-					job = rcvd.split(" ");
-					send("GETS Avail " + job[4] + " " + job[5] + " " + job[6], sock);
-					current = job;
-				} else if(rcvd.equals(".")){
-					send("SCHD " + current[2] + " " + largestServer(si.servers) + " 0", sock);
-				} else if(rcvd.equals("OK")||rcvd.contains("JCPL")){
-					send("REDY", sock);
-				} else if(rcvd.contains("ERR")){
-					send("QUIT", sock);
-					sock.close();
-				} else {
-					send("OK", sock);
+				if(rcvd.length() > 0)
+					if(rcvd.contains("JOBN")){
+						job = rcvd.split(" ");
+						send("GETS Avail " + job[4] + " " + job[5] + " " + job[6], sock);
+					} else if(rcvd.equals(".")){
+						send("SCHD " + counter + " " + largestServer(si.servers) + " 0", sock);
+						counter++;
+					} else if(rcvd.equals("OK")||rcvd.contains("JCPL")){
+						send("REDY", sock);
+					} else if(rcvd.contains("ERR")){
+						error(sock);
+					} else {
+						send("OK", sock);
 				}
 				rcvd = receive(sock);
+				//System.out.println(rcvd);
 			}
 
 			//quit protocol
@@ -61,6 +61,7 @@ public class MyClient {
                 rcvd = receive(sock);
                 if(rcvd.contains("QUIT")) {
                     sock.close();
+					System.exit(0);
 					System.out.println("aha");
                 }
             } else {
@@ -70,6 +71,7 @@ public class MyClient {
 
 		} catch(Exception e){
 			e.printStackTrace();
+			System.exit(1);
 		}
 	}
 
@@ -87,7 +89,6 @@ public class MyClient {
 			cha = (char)dataIn.readByte();
 			temp += cha;
 		}
-		System.out.println("<rcvd: "+temp+">");
 		return temp;
 	}
 
@@ -106,6 +107,7 @@ public class MyClient {
 	private static void error(Socket soc) throws IOException {
         send("QUIT", soc);
         soc.close();
+		System.exit(1);
     }
 
 }

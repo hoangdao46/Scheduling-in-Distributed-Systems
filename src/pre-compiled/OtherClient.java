@@ -2,7 +2,7 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
-public class week6 {
+public class OtherClient {
 
 	public static void main(String[] args) throws Exception{
 		try {
@@ -11,7 +11,7 @@ public class week6 {
 			System.out.println("Connected to Server");
 			String rcvd = "";
 			String[] job;
-			String[] current;
+			int counter = 0;
 
 			send("HELO", sock);
 			rcvd = receive(sock);
@@ -37,15 +37,14 @@ public class week6 {
 
 			//job schedule
 			rcvd = receive(sock);
-			current = rcvd.split(" ");
 
 			while(!rcvd.contains("NONE")){
 				if(rcvd.contains("JOBN")){
 					job = rcvd.split(" ");
 					send("GETS Avail " + job[4] + " " + job[5] + " " + job[6], sock);
-					current = job;
-				} else if(rcvd.contains(".") && rcvd.length() == 1){
-					send("SCHD " + current[2] + " " + largestServer(si.servers) + " 0", sock);
+				} else if(rcvd.equals(".") || rcvd.equals("..")){
+					send("SCHD " + counter + " " + largestServer(si.servers) + " 0", sock);
+					counter++;
 				} else if(rcvd.contains("OK") || rcvd.contains("JCPL")){
 					send("REDY", sock);
 				} else if(rcvd.contains("ERR")){
@@ -79,13 +78,12 @@ public class week6 {
 	private static String receive(Socket soc) throws IOException{
 		String temp = "";
 		BufferedReader dataIn = new BufferedReader(new InputStreamReader(soc.getInputStream()));
-		StringBuffer buff = new StringBuffer();
+		//StringBuffer buff = new StringBuffer();
 		while (dataIn.ready()){
 			char[] c = new char[] {1};
 			dataIn.read(c);
-			buff.append(c);
+			temp+=c[0];
 		}
-		temp = buff.toString();
 		System.out.println(temp);
 		return temp;
 	}
