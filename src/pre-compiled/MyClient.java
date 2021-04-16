@@ -35,7 +35,6 @@ public class MyClient {
 
 			//job schedule
 			rcvd = receive(sock);
-
 			while(!rcvd.contains("NONE")){
 				if(rcvd.length() > 0)
 					if(rcvd.contains("JOBN")){
@@ -52,7 +51,6 @@ public class MyClient {
 						send("OK", sock);
 				}
 				rcvd = receive(sock);
-				//System.out.println(rcvd);
 			}
 
 			//quit protocol
@@ -62,11 +60,9 @@ public class MyClient {
                 if(rcvd.contains("QUIT")) {
                     sock.close();
 					System.exit(0);
-					System.out.println("aha");
                 }
             } else {
                 error(sock);
-				System.out.println("yeah");
             }
 
 		} catch(Exception e){
@@ -94,14 +90,14 @@ public class MyClient {
 
 	private static String largestServer(List<ServerInfo> servers){
 		String bigServer = "";
-	        Integer largest = 0;
+	    Integer largest = 0;
 		for (ServerInfo server : servers) {
 	        	if(server.serverCoreCount > largest) {
-                		largest = server.serverCoreCount;
-                		bigServer = server.serverType;
-            		}
+                	largest = server.serverCoreCount;
+                	bigServer = server.serverType;
+            	}
         	}
-        	return bigServer;
+        return bigServer;
     }
 
 	private static void error(Socket soc) throws IOException {
