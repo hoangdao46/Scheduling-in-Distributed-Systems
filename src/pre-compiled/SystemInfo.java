@@ -6,6 +6,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
 public class SystemInfo {
+    //create a list of servers
     List<ServerInfo> servers = new ArrayList<ServerInfo>();
 
     public int readXML(String file) throws FileNotFoundException, XMLStreamException {
@@ -13,7 +14,8 @@ public class SystemInfo {
             XMLInputFactory factory = XMLInputFactory.newInstance();
             XMLStreamReader reader = factory.createXMLStreamReader(new FileInputStream(new File(file)));
             ServerInfo server;
-
+            
+            //add attributes to individual server objects
             while (reader.hasNext()) {
                 int event = reader.next();
                 switch (event) {

@@ -84,13 +84,14 @@ public class MyClient {
             } else {
                 error(sock, isNewline);
             }
-
+		
 		} catch(Exception e){
 			e.printStackTrace();
 			System.exit(1);
 		}
 	}
 
+	//send messages while checking for newline (if needed) and flushes the stream
 	private static void send(String str, Socket sOut, boolean newline) throws IOException{
 		DataOutputStream dataOut = new DataOutputStream(sOut.getOutputStream());
 		if(newline){
@@ -101,6 +102,7 @@ public class MyClient {
 		dataOut.flush();
 	}
 
+	//receives messages while checking for newline (if needed) and returns a string
 	private static String receive(Socket sIn, boolean newline) throws IOException{
 		DataInputStream dataIn = new DataInputStream(sIn.getInputStream());
 		String temp = "";
@@ -115,18 +117,20 @@ public class MyClient {
 		return temp;
 	}
 
+	//checks the list of servers and determines the largest server by core count
 	private static String largestServer(List<ServerInfo> servers){
 		String bigServer = ""; //name of biggest server
 	        Integer largest = 0;
 		for (ServerInfo server : servers) {
-	        	if(server.serverCoreCount > largest) { //loop to find the first largest core count 
-                	largest = server.serverCoreCount; 
-                	bigServer = server.serverType;
-            	}
-        	}
+	        if(server.serverCoreCount > largest) { //loop to find the first largest core count 
+                largest = server.serverCoreCount; 
+                bigServer = server.serverType;
+            }
+        }
         return bigServer;
     }
 
+	//sends an error and exits the client safely
 	private static void error(Socket soc, boolean newline) throws IOException {
         send("QUIT", soc, newline);
         soc.close();
