@@ -8,61 +8,80 @@ public class MyClient {
 		try {
 			Socket sock = new Socket("localhost", 50000);
 			System.out.println("# java Client updated 24-March, 2021 @ MQ");
-			System.out.println("Connected to Server");
+			System.out.print("# Client-side simulator started with java MyClient");
 			String rcvd = "";
 			String[] job;
 			int counter = 0;
+			boolean isNewline = true;
+			
+			//checks for command line arguments
+			for(int i = 0; i < args.length; i++){
+				if(args[i].equalsIgnoreCase("-n")) {
+					isNewline = true;
+				}
+				if(!args[i].equals("")){
+					if(i <= (args.length-1)){
+						System.out.print(" " + args[i]);
+					}
+				}
+			}
+			System.out.println("");
 
-			send("HELO", sock);
-			rcvd = receive(sock);
+			//handshake messages between client and server
+			send("HELO", sock, isNewline);
+			rcvd = receive(sock, isNewline);
 			if(rcvd.equals("OK")){
-				send("AUTH "+System.getProperty("user.name"), sock);
+				send("AUTH "+System.getProperty("user.name"), sock, isNewline);
+			} else {
+				error(sock, isNewline);
 			}
 
+			//read ds-system.xml
 			SystemInfo si = new SystemInfo();
 			int fileread = si.readXML("ds-system.xml");
 
-			rcvd = receive(sock);
+			//check if file has been read successfully
+			rcvd = receive(sock, isNewline);
 			if(fileread == 0){
 				if(rcvd.equals("OK")){
-					send("REDY", sock);
+					send("REDY", sock, isNewline);
 				} else {
-					error(sock);
+					error(sock, isNewline);
 				}
 			} else {
-				error(sock);
+				error(sock, isNewline);
 			}
 
-			//job schedule
-			rcvd = receive(sock);
+			//job scheduler
+			rcvd = receive(sock, isNewline);
 			while(!rcvd.contains("NONE")){
 				if(rcvd.length() > 0)
 					if(rcvd.contains("JOBN")){
 						job = rcvd.split(" ");
-						send("GETS Avail " + job[4] + " " + job[5] + " " + job[6], sock);
+						send("GETS Avail " + job[4] + " " + job[5] + " " + job[6], sock, isNewline);
 					} else if(rcvd.equals(".")){
-						send("SCHD " + counter + " " + largestServer(si.servers) + " 0", sock);
+						send("SCHD " + counter + " " + largestServer(si.servers) + " 0", sock, isNewline);
 						counter++;
 					} else if(rcvd.equals("OK")||rcvd.contains("JCPL")){
-						send("REDY", sock);
+						send("REDY", sock, isNewline);
 					} else if(rcvd.contains("ERR")){
-						error(sock);
+						error(sock, isNewline);
 					} else {
-						send("OK", sock);
+						send("OK", sock, isNewline);
 				}
-				rcvd = receive(sock);
+				rcvd = receive(sock, isNewline);
 			}
 
 			//quit protocol
 			if(rcvd.contains("NONE")) {
-                send("QUIT", sock);
-                rcvd = receive(sock);
+                send("QUIT", sock, isNewline);
+                rcvd = receive(sock, isNewline);
                 if(rcvd.contains("QUIT")) {
                     sock.close();
 					System.exit(0);
                 }
             } else {
-                error(sock);
+                error(sock, isNewline);
             }
 
 		} catch(Exception e){
@@ -71,19 +90,26 @@ public class MyClient {
 		}
 	}
 
-	private static void send(String str, Socket sOut) throws IOException{
+	private static void send(String str, Socket sOut, boolean newline) throws IOException{
 		DataOutputStream dataOut = new DataOutputStream(sOut.getOutputStream());
-		dataOut.write(str.getBytes());
+		if(newline){
+			dataOut.write((str+"\n").getBytes());
+		} else {
+			dataOut.write(str.getBytes());
+		}
 		dataOut.flush();
 	}
 
-	private static String receive(Socket sIn) throws IOException{
+	private static String receive(Socket sIn, boolean newline) throws IOException{
 		DataInputStream dataIn = new DataInputStream(sIn.getInputStream());
 		String temp = "";
 		char cha = '\0';
 		while(dataIn.available()!=0){
 			cha = (char)dataIn.readByte();
 			temp += cha;
+		}
+		if(newline){
+			temp = temp.replace("\n", "");
 		}
 		return temp;
 	}
@@ -100,8 +126,8 @@ public class MyClient {
         return bigServer;
     }
 
-	private static void error(Socket soc) throws IOException {
-        send("QUIT", soc);
+	private static void error(Socket soc, boolean newline) throws IOException {
+        send("QUIT", soc, newline);
         soc.close();
 		System.exit(1);
     }

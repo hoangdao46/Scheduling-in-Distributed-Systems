@@ -8,17 +8,17 @@ public class TestInput {
 		DataOutputStream dataOut = new DataOutputStream(s.getOutputStream());
 		DataInputStream dataIn = new DataInputStream(s.getInputStream());
 
-		dataOut.write("HELO".getBytes());
+		dataOut.write("HELO\n".getBytes());
 		dataOut.flush();
 		
 		receive(dataIn);
 
-		dataOut.write("AUTH nerip".getBytes());
+		dataOut.write("AUTH nerip\n".getBytes());
 		dataOut.flush();
 
 		receive(dataIn);
 
-		dataOut.write("REDY".getBytes());
+		dataOut.write("REDY\n".getBytes());
 		dataOut.flush();
 
 		receive(dataIn);
@@ -40,10 +40,6 @@ public class TestInput {
 		while(di.available()!=0){
 			cha = (char)di.readByte();
 			temp += cha;
-		}
-		System.out.println(temp);
-		if(temp.equals("")){
-			receive(di);
 		}
 		return temp;
 	}
