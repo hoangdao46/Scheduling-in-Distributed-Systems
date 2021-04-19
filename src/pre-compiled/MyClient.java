@@ -12,13 +12,14 @@ public class MyClient {
 			String rcvd = "";
 			String[] job;
 			int counter = 0;
-			boolean isNewline = true;
+			boolean isNewline = false;
 			
 			//checks for command line arguments
 			for(int i = 0; i < args.length; i++){
 				if(args[i].equalsIgnoreCase("-n")) {
 					isNewline = true;
 				}
+				//displays command line arguments after "java MyClient"
 				if(!args[i].equals("")){
 					if(i <= (args.length-1)){
 						System.out.print(" " + args[i]);
@@ -78,7 +79,7 @@ public class MyClient {
                 rcvd = receive(sock, isNewline);
                 if(rcvd.contains("QUIT")) {
                     sock.close();
-		    System.exit(0);
+		    		System.exit(0);
                 }
             } else {
                 error(sock, isNewline);
