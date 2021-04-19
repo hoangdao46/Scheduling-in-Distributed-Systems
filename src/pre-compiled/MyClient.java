@@ -31,7 +31,7 @@ public class MyClient {
 			send("HELO", sock, isNewline);
 			rcvd = receive(sock, isNewline);
 			if(rcvd.equals("OK")){
-				send("AUTH "+System.getProperty("user.name"), sock, isNewline);
+			send("AUTH "+System.getProperty("user.name"), sock, isNewline); //authenticates username
 			} else {
 				error(sock, isNewline);
 			}
@@ -78,7 +78,7 @@ public class MyClient {
                 rcvd = receive(sock, isNewline);
                 if(rcvd.contains("QUIT")) {
                     sock.close();
-					System.exit(0);
+		    System.exit(0);
                 }
             } else {
                 error(sock, isNewline);
@@ -115,11 +115,11 @@ public class MyClient {
 	}
 
 	private static String largestServer(List<ServerInfo> servers){
-		String bigServer = "";
-	    Integer largest = 0;
+		String bigServer = ""; //name of biggest server
+	        Integer largest = 0;
 		for (ServerInfo server : servers) {
-	        	if(server.serverCoreCount > largest) {
-                	largest = server.serverCoreCount;
+	        	if(server.serverCoreCount > largest) { //loop to find largest core count 
+                	largest = server.serverCoreCount; 
                 	bigServer = server.serverType;
             	}
         	}
