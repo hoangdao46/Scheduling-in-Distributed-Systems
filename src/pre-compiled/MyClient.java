@@ -119,7 +119,7 @@ public class MyClient {
 		String bigServer = ""; //name of biggest server
 	        Integer largest = 0;
 		for (ServerInfo server : servers) {
-	        	if(server.serverCoreCount > largest) { //loop to find largest core count 
+	        	if(server.serverCoreCount > largest) { //loop to find the first largest core count 
                 	largest = server.serverCoreCount; 
                 	bigServer = server.serverType;
             	}
