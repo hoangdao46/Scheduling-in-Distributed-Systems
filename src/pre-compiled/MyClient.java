@@ -6,7 +6,7 @@ public class MyClient {
 
 	public static void main(String[] args) throws Exception{
 		try {
-			Socket sock = new Socket("localhost", 50000);
+			Socket sock = new Socket("localhost", 50000); //creates socket for connection
 			System.out.println("# java Client updated 24-March, 2021 @ MQ");
 			System.out.print("# Client-side simulator started with java MyClient");
 			String rcvd = "";
