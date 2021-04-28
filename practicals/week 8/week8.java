@@ -78,7 +78,6 @@ public class week8 {
 						if(dataCheck){
 							data = rcvd.split("\n");
 							cap = data[data.length-1].split(" ");
-							System.out.println(Arrays.toString(cap));
 							capableServer = cap[0];
 							dataCheck = false;
 						}
