@@ -77,7 +77,7 @@ public class week8 {
 					} else {
 						if(dataCheck){
 							data = rcvd.split("\n");
-							cap = data[data.length-1].split(" ");
+							cap = data[0].split(" ");
 							capableServer = cap[0];
 							dataCheck = false;
 						}
